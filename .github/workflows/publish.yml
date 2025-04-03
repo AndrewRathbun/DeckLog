@@ -32,4 +32,4 @@ jobs:
       uses: actions/upload-artifact@v4 # Updated to v4
       with:
         name: DeckLog-exe
-        path: bin/DeckLog.exe
+        path: dist/DeckLog.exe
