@@ -1,35 +1,55 @@
-name: Build Windows Executable
+name: Build and Release Windows Executable
 
 on:
   push:
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
+      - release # Trigger on pushes to the 'release' branch
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4 # Updated to v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pyinstaller
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
 
-    - name: Build executable with PyInstaller
-      run: |
-        pyinstaller --onefile --windowed DeckLog.py
+      - name: Build executable with PyInstaller
+        run: |
+          pyinstaller --onefile --windowed DeckLog.py
 
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4 # Updated to v4
-      with:
-        name: DeckLog-exe
-        path: dist/DeckLog.exe
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DeckLog-exe
+          path: dist/DeckLog.exe
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_name: Release from ${{ github.ref_name }} #Or hard code a name.
+          body: |
+            Automated release from the ${{ github.ref_name }} branch.
+            Download the executable below.
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/DeckLog.exe
+          asset_name: DeckLog.exe
+          asset_content_type: application/vnd.microsoft.portable-executable
