@@ -1,0 +1,41 @@
+name: Build Windows Executable
+
+on:
+  push:
+    branches:
+      - main # Or whatever branch you want to trigger on
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12' # Or specify a specific version like '3.9'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller
+
+    - name: Install project dependencies (if any)
+      run: |
+        pip install -r requirements.txt # If you have a requirements.txt file
+
+    - name: Build executable with PyInstaller
+      run: |
+        pyinstaller --onefile --windowed DeckLog.py # Replace DeckLog.py with your main script
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: DeckLog-exe
+        path: bin/DeckLog.exe #replace DeckLog.exe with the name of your compiled exe.
