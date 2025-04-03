@@ -28,7 +28,7 @@ jobs:
 
       - name: Build executable with PyInstaller
         run: |
-          pyinstaller --onefile --windowed --add-data prompts.json DeckLog.py
+          pyinstaller --onefile --windowed --add-data=prompts.json:. DeckLog.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
