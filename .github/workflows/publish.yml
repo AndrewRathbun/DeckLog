@@ -3,7 +3,7 @@ name: Build and Release Windows Executable
 on:
   push:
     branches:
-      - release # Trigger on pushes to the 'release' branch
+      - main # Trigger on pushes to the 'main' branch
 
 jobs:
   build:
@@ -37,9 +37,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          release_name: Release from ${{ github.ref_name }} #Or hard code a name.
+          tag_name: "release-main" # Preconfigured tag name
+          release_name: Release from main
           body: |
-            Automated release from the ${{ github.ref_name }} branch.
+            Automated release from the main branch.
             Download the executable below.
           draft: false
           prerelease: false
